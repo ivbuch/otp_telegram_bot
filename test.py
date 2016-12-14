@@ -1,15 +1,3 @@
-print "Hello world"
-
-print "test2"
-
-class Car:
-
-
-    def print_name(self):
-
-        print "igor"
-
-
-
-car = Car()
-car.print_name()
+import pyotp
+totp = pyotp.TOTP("JBSWY3DPEHPK3PXP")
+print("Current OTP:", totp.now())
