@@ -1,6 +1,7 @@
 import logging
 import time
-from telegram_bot import TelegramBot
+
+from testbot.telegram_bot import TelegramBot
 
 logging.basicConfig(filename='example.log',level=logging.INFO)
 

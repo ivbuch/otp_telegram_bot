@@ -1,6 +1,6 @@
 import unittest
 
-from test import Car
+from testbot.test import Car
 
 class TestStringMethods(unittest.TestCase):
 
