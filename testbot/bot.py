@@ -12,7 +12,7 @@ if __name__ == "__main__":
     while True:
         logging.info('Waiting 10 seconds')
         time.sleep(3)
-        bot.get_updates()
+        updates = bot.get_new_updates()
         try:
             logging.debug("do work")
         except:
