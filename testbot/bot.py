@@ -1,8 +1,10 @@
 import logging
 import time
 
-from testbot.telegram_bot import TelegramBot
+from config import Config
+from telegram_bot import TelegramBot
 
+config = Config()
 logging.basicConfig(filename='example.log',level=logging.INFO)
 
 if __name__ == "__main__":
