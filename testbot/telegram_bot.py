@@ -9,7 +9,6 @@ class TelegramBot:
         url = "https://api.telegram.org/bot314217478:AAGHsjSvTO26nDr3mP7-RlWhGOTbVEgyOKA/getUpdates"
         response = urllib.urlopen(url)
         data = json.loads(response.read())
-
         updates = []
         for update in data["result"]:
             updates.append(BotUpdate(update))
@@ -19,6 +18,7 @@ class TelegramBot:
         url = "https://api.telegram.org/bot314217478:AAGHsjSvTO26nDr3mP7-RlWhGOTbVEgyOKA/getMe"
         response = urllib.urlopen(url)
         data = json.loads(response.read())
+	print "get_status"
         print data
 
 
