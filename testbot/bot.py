@@ -2,20 +2,21 @@ import logging
 import time
 
 from config import Config
-from telegram_bot import TelegramBot
+from hotp_bot import HOtpBot
 
 config = Config()
 logging.basicConfig(filename='example.log',level=logging.INFO)
 
 if __name__ == "__main__":
 
-    bot = TelegramBot()
+    bot = HOtpBot(config)
 
     while True:
-        logging.info('Waiting 10 seconds')
-        time.sleep(3)
-        updates = bot.get_new_updates()
         try:
             logging.debug("do work")
+            updates = bot.process()
+            time.sleep(3)
+            logging.info('Waiting 10 seconds')
         except:
+            print "error"
             logging.exception("Failed to get updates.")

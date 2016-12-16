@@ -1,4 +1,4 @@
-from testbot.otp_supplier import OtpSupplier
+from testbot.hotp_supplier import OtpSupplier
 
 import unittest
 
