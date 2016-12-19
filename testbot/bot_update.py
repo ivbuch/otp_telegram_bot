@@ -1,3 +1,5 @@
+from datetime import datetime
+
 class BotUpdate:
 
     chat_id = None
@@ -10,3 +12,4 @@ class BotUpdate:
         self.text = update_json["message"]["text"]
         self.update_id = update_json["update_id"]
         self.chat_id = update_json["message"]["chat"]["id"]
+        self.date = datetime.fromtimestamp (update_json["message"]["date"])

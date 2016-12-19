@@ -2,10 +2,11 @@ import urllib, json
 from testbot.bot_update import BotUpdate
 from testbot.hotp_supplier import HOtpSupplier
 import requests
+from datetime import datetime
 
 class HOtpBot:
 
-    lastUpdateId = -1
+    last_update_date = datetime.now()
 
     def __init__(self, config):
         self.htopSupplier = HOtpSupplier(config.secretKey, config.counter)
@@ -27,10 +28,14 @@ class HOtpBot:
         updates = []
         for update in data["result"]:
             botUpdate = BotUpdate(update)
-            if botUpdate.update_id > self.lastUpdateId and self.chat_id_valid(update):
+            if self.is_valid_command(botUpdate) and botUpdate.date > self.last_update_date and self.chat_id_valid(update):
                 updates.append(botUpdate)
-                self.lastUpdateId = botUpdate.update_id
+
+        self.last_update_date = datetime.now()
         return updates
+
+    def is_valid_command(self, update):
+        return update.text == "one more"
 
     def chat_id_valid(self, update):
         return self.config.chat_id == -1 or update.chat_id == self.config.chat_id
