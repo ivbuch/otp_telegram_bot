@@ -1,2 +1,3 @@
 FROM python:3-onbuild
-ENTRYPOINT ["./testbot/bot.py"]
+WORKDIR /usr/src/app/testbot
+ENTRYPOINT ["./bot.py"]
