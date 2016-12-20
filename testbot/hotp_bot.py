@@ -1,6 +1,6 @@
 import urllib, json
-from testbot.bot_update import BotUpdate
-from testbot.hotp_supplier import HOtpSupplier
+from bot_update import BotUpdate
+from hotp_supplier import HOtpSupplier
 import requests
 from datetime import datetime
 
@@ -19,12 +19,20 @@ class HOtpBot:
             self.sendToken(update)
 
     def get_url(self, resource):
-        return "https://api.telegram.org/{}/{}".format(self.config.bot_token, resource)
+        return "https://api.telegram.org/bot{}/{}".format(self.config.bot_token, resource)
 
+    def check_not_found(self, data):
+
+        ok = data["ok"] == True
+        if not ok:
+            print "not ok response {}".format(data)
+            raise StandardError("not ok response")
 
     def get_new_updates(self):
         response = urllib.urlopen(self.get_url("getUpdates"))
         data = json.loads(response.read())
+        self.check_not_found(data)
+
         updates = []
         for update in data["result"]:
             botUpdate = BotUpdate(update)

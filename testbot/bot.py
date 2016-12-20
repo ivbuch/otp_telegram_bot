@@ -1,16 +1,15 @@
-import logging
-import time
-import sys
+import sys, traceback, time, logging
 
 from config import Config
 from hotp_bot import HOtpBot
 
 config = Config()
-logging.basicConfig(filename='example.log',level=logging.INFO)
+logging.basicConfig(filename='example.log', level=logging.INFO)
 
 if __name__ == "__main__":
 
     bot = HOtpBot(config)
+    print "app started"
     while True:
         try:
             logging.debug("do work")
@@ -18,5 +17,8 @@ if __name__ == "__main__":
             time.sleep(config.sleepTimeout)
             logging.info('Waiting {} seconds'.format(config.sleepTimeout))
         except:
-            print "error" + sys.exc_info()[0]
-            logging.exception("Failed to get updates.")
+            print "Exception in user code:"
+            print '-' * 60
+            traceback.print_exc(file=sys.stdout)
+            print '-' * 60
+            raise StandardError("Exception in user code")

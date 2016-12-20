@@ -6,7 +6,6 @@ class Config:
         self.secretKey = "secretKey"
         self.parseParams()
         self.validateParams()
-        print "parse params" + self.secretKey
 
     def parseParams(self):
         parser = argparse.ArgumentParser()
