@@ -1,3 +1,3 @@
-FROM python:3-onbuild
+FROM python:2-onbuild
 WORKDIR /usr/src/app/testbot
-ENTRYPOINT ["./bot.py"]
+ENTRYPOINT [ "python", "./bot.py"]
