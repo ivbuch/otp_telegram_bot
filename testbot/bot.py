@@ -9,7 +9,7 @@ logging.basicConfig(filename='example.log', level=logging.INFO)
 if __name__ == "__main__":
 
     bot = HOtpBot(config)
-    print "app started"
+    print("app started")
     while True:
         try:
             logging.debug("do work")
@@ -17,8 +17,6 @@ if __name__ == "__main__":
             time.sleep(config.sleepTimeout)
             logging.info('Waiting {} seconds'.format(config.sleepTimeout))
         except:
-            print "Exception in user code:"
-            print '-' * 60
+            print("Exception in user code:")
             traceback.print_exc(file=sys.stdout)
-            print '-' * 60
-            raise StandardError("Exception in user code")
+            raise Exception("Exception in user code")

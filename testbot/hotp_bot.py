@@ -1,8 +1,11 @@
-import urllib, json, time, requests
-from bot_update import BotUpdate
-from hotp_supplier import HOtpSupplier
+import json, time, requests
+
+import urllib.request, urllib.parse, urllib.error
 from datetime import datetime
 from threading import Timer
+
+from testbot.bot_update import BotUpdate
+from testbot.hotp_supplier import HOtpSupplier
 
 class HOtpBot:
 
@@ -25,12 +28,12 @@ class HOtpBot:
 
         ok = data["ok"] == True
         if not ok:
-            print "not ok response {}".format(data)
-            raise StandardError("not ok response")
+            print("not ok response {}".format(data))
+            raise Exception("not ok response")
 
     def get_new_updates(self):
-        response = urllib.urlopen(self.get_url("getUpdates"))
-        data = json.loads(response.read())
+        response = urllib.request.urlopen(self.get_url("getUpdates"))
+        data = json.loads (response.readall().decode('utf-8'))
         self.check_not_found(data)
 
         updates = []
@@ -52,22 +55,22 @@ class HOtpBot:
         return result
 
     def get_status(self):
-        response = urllib.urlopen(self.get_url("getMe"))
+        response = urllib.request.urlopen(self.get_url("getMe"))
         data = json.loads(response.read())
-        print data
+        print(data)
 
     def sendToken(self, update):
-        print "Process new update " + str(update.update_id)
+        print("Process new update " + str(update.update_id))
         token = self.htopSupplier.next()
-        print "new token " + token
+        print("new token " + token)
         data = {'chat_id': update.chat_id, 'text': 'your token is *{}*, sir'.format(token), "parse_mode": "Markdown"}
         response = requests.post(self.get_url("sendMessage"), data = data)
-        response_json = json.loads(response.content)
+        response_json = json.loads(response.text)
         if response_json["ok"]:
             self.schedule_invalidate_message(response_json["result"]["message_id"])
 
     def schedule_invalidate_message(self, message_id):
-        Timer(30, self.invalidate_message, [message_id]).start()
+        Timer(1, self.invalidate_message, [message_id]).start()
 
     def invalidate_message(self, message_id):
 
