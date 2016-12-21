@@ -3,12 +3,11 @@ import json, time, requests
 import urllib.request, urllib.parse, urllib.error
 from datetime import datetime
 from threading import Timer
+from bot_update import BotUpdate
+from hotp_supplier import HOtpSupplier
 
-from testbot.bot_update import BotUpdate
-from testbot.hotp_supplier import HOtpSupplier
 
 class HOtpBot:
-
     last_update_date = datetime.now()
 
     def __init__(self, config):
@@ -31,19 +30,32 @@ class HOtpBot:
             print("not ok response {}".format(data))
             raise Exception("not ok response")
 
+    def make_json_call(self, method, data):
+        response = requests.post(self.get_url(method), data=data)
+        response_json = json.loads(response.text)
+        return response_json
+
     def get_new_updates(self):
-        response = urllib.request.urlopen(self.get_url("getUpdates"))
-        data = json.loads (response.readall().decode('utf-8'))
+
+        request_data = {"limit": 100}
+        if hasattr(self, "update_id"):
+            request_data["offset"] = self.update_id
+
+        data = self.make_json_call("getUpdates", request_data)
         self.check_not_found(data)
 
         updates = []
         for update in data["result"]:
             botUpdate = BotUpdate(update)
-            if self.is_valid_command(botUpdate) and botUpdate.date > self.last_update_date and self.chat_id_valid(botUpdate):
+            if (self.is_recent(botUpdate)) and (self.is_valid_command(botUpdate)) and (self.chat_id_valid(botUpdate)):
                 updates.append(botUpdate)
+            self.update_id = update["update_id"]
 
         self.last_update_date = datetime.now()
         return updates
+
+    def is_recent(self, botUpdate):
+        return botUpdate.date > self.last_update_date
 
     def is_valid_command(self, update):
         return update.text == "one more"
@@ -64,8 +76,7 @@ class HOtpBot:
         token = self.htopSupplier.next()
         print("new token " + token)
         data = {'chat_id': update.chat_id, 'text': 'your token is *{}*, sir'.format(token), "parse_mode": "Markdown"}
-        response = requests.post(self.get_url("sendMessage"), data = data)
-        response_json = json.loads(response.text)
+        response_json = self.make_json_call("sendMessage", data)
         if response_json["ok"]:
             self.schedule_invalidate_message(response_json["result"]["message_id"])
 
@@ -76,4 +87,4 @@ class HOtpBot:
 
         print("invalidated token " + str(message_id))
         data = {'chat_id': self.config.chat_id, 'text': 'invalidated message', "message_id": message_id}
-        requests.post(self.get_url("editMessageText"), data = data)
+        self.make_json_call("editMessageText", data)
