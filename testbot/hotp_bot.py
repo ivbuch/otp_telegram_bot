@@ -1,8 +1,8 @@
-import urllib, json
+import urllib, json, time, requests
 from bot_update import BotUpdate
 from hotp_supplier import HOtpSupplier
-import requests
 from datetime import datetime
+from threading import Timer
 
 class HOtpBot:
 
@@ -36,7 +36,7 @@ class HOtpBot:
         updates = []
         for update in data["result"]:
             botUpdate = BotUpdate(update)
-            if self.is_valid_command(botUpdate) and botUpdate.date > self.last_update_date and self.chat_id_valid(update):
+            if self.is_valid_command(botUpdate) and botUpdate.date > self.last_update_date and self.chat_id_valid(botUpdate):
                 updates.append(botUpdate)
 
         self.last_update_date = datetime.now()
@@ -46,7 +46,10 @@ class HOtpBot:
         return update.text == "one more"
 
     def chat_id_valid(self, update):
-        return self.config.chat_id == -1 or update.chat_id == self.config.chat_id
+        result = update.chat_id == int(self.config.chat_id)
+        if not result:
+            print("incorrect chat id {}".format(update.chat_id))
+        return result
 
     def get_status(self):
         response = urllib.urlopen(self.get_url("getMe"))
@@ -58,6 +61,16 @@ class HOtpBot:
         token = self.htopSupplier.next()
         print "new token " + token
         data = {'chat_id': update.chat_id, 'text': 'your token is *{}*, sir'.format(token), "parse_mode": "Markdown"}
-        requests.post(self.get_url("sendMessage"), data = data)
+        response = requests.post(self.get_url("sendMessage"), data = data)
+        response_json = json.loads(response.content)
+        if response_json["ok"]:
+            self.schedule_invalidate_message(response_json["result"]["message_id"])
 
+    def schedule_invalidate_message(self, message_id):
+        Timer(30, self.invalidate_message, [message_id]).start()
 
+    def invalidate_message(self, message_id):
+
+        print("invalidated token " + str(message_id))
+        data = {'chat_id': self.config.chat_id, 'text': 'invalidated message', "message_id": message_id}
+        requests.post(self.get_url("editMessageText"), data = data)

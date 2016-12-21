@@ -11,7 +11,7 @@ class Config:
         parser = argparse.ArgumentParser()
         parser.add_argument('-bot', action='store', dest='bot_token', help='Bot token')
         parser.add_argument('-secret', action='store', dest='secretKey', help='SecretKey')
-        parser.add_argument('-chat', action='store', dest='chat_id', help='Chat id', default=-1)
+        parser.add_argument('-chat', action='store', dest='chat_id', help='Chat id')
         parser.add_argument('-sleep', action='store', dest='sleepTimeout', help='Sleep timeout', default = 5)
         parser.add_argument('-counter', action='store', dest='counter', help='Counter', default=0)
         args = parser.parse_args()
@@ -26,3 +26,5 @@ class Config:
             raise ValueError("secretKey must be set")
         if not self.bot_token:
             raise ValueError("bot_token must be set")
+        if not self.chat_id:
+            raise ValueError("chat_id must be set")
