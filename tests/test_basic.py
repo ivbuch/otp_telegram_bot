@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .context import testbot
+from .context import otp_bot
 
 import unittest
 
