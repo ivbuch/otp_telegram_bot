@@ -1,12 +1,25 @@
-Telegram Bot
+Telegram Bot for generating one-time passwords based on counter algorithm
 
-<!---Counter-based OTPs 
+To run application in docker container:
+
+* build docker image
+
+::
+
+    docker build -t "ivbuch/otp_bot" . 
+
+* run docker container
+
+::
+  
+    docker run -t "ivbuch/otp_bot" -bot TOKEN  -secret BASE_32_SECRET_KEY -chat CHAT_ID 
+
+where you provide:
+ 
+ TOKEN - token of your bot which you want to use
+ BASE_32_SECRET_KEY - secret key
+ CHAT_ID - chat id. Only on request from that chat bot generates passwords
 
 
-
-docker run -t "ivbuch/bot" -bot 314217478:AAELPwmsUoYdmzw2Vqq22jeNsCTC9f5EhY4  -secret base32secret323 -chat 306665173
-
-docker build -t "ivbuch/bot" .
-
-
-secret "base32secret3232" -bot "314217478:AAELPwmsUoYdmzw2Vqq22jeNsCTC9f5EhY4" -chat 306665173 -->
+After running container you send a bot a command (default is "more") and bot replies with your password.
+You can also set counter of your secret key and command you send to bot.

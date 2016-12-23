@@ -39,7 +39,7 @@ class HOtpBot:
 
         request_data = {"limit": 100}
         if hasattr(self, "update_id"):
-            request_data["offset"] = self.update_id
+            request_data["offset"] = self.update_id + 1
 
         data = self.make_json_call("getUpdates", request_data)
         self.check_not_found(data)
@@ -58,7 +58,7 @@ class HOtpBot:
         return botUpdate.date > self.last_update_date
 
     def is_valid_command(self, update):
-        return update.text == "one more"
+        return update.text == self.config.command
 
     def chat_id_valid(self, update):
         result = update.chat_id == int(self.config.chat_id)
@@ -81,7 +81,7 @@ class HOtpBot:
             self.schedule_invalidate_message(response_json["result"]["message_id"])
 
     def schedule_invalidate_message(self, message_id):
-        Timer(1, self.invalidate_message, [message_id]).start()
+        Timer(30, self.invalidate_message, [message_id]).start()
 
     def invalidate_message(self, message_id):
 
