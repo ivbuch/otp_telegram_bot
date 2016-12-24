@@ -47,15 +47,11 @@ class HOtpBot:
         updates = []
         for update in data["result"]:
             botUpdate = BotUpdate(update)
-            if (self.is_recent(botUpdate)) and (self.is_valid_command(botUpdate)) and (self.chat_id_valid(botUpdate)):
+            if (self.is_valid_command(botUpdate) and self.chat_id_valid(botUpdate)):
                 updates.append(botUpdate)
-            self.update_id = update["update_id"]
+                self.update_id = update["update_id"]
 
-        self.last_update_date = datetime.now()
-        return updates
-
-    def is_recent(self, botUpdate):
-        return botUpdate.date > self.last_update_date
+       return updates
 
     def is_valid_command(self, update):
         return update.text == self.config.command
